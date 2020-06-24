@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 {
   "extends": "../tsconfig.json",
   "compilerOptions": {
@@ -10,16 +9,3 @@
     "**/*.spec.ts"
   ], 
 }
-=======
-{
-  "extends": "../tsconfig.json",
-  "compilerOptions": {
-    "outDir": "../out-tsc/app",
-    "types": [ "googlemaps" ]
-  },
-  "exclude": [
-    "test.ts",
-    "**/*.spec.ts"
-  ], 
-}
->>>>>>> a97850c7aaaf16e22bc1e2201526268b5ca21396
