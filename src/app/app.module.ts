@@ -25,6 +25,8 @@ import { Pipe, PipeTransform } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
 import { MonitorChartsComponent } from './monitor-charts/monitor-charts.component';
 
+import { AgmCoreModule } from '@agm/core';
+
 
 @Pipe({
   name: 'safe'
@@ -40,13 +42,13 @@ export class SafePipe implements PipeTransform {
 
 
 
-
-
 @NgModule({
   declarations: [AppComponent, SafePipe, MonitorChartsComponent],
   imports: [BrowserModule, HttpClientModule, MatMenuModule, BrowserAnimationsModule, MatTableModule,
      MatListModule, CommonModule, MatTreeModule, MatIconModule, MatButtonModule, MatExpansionModule,
-     MatCheckboxModule, MatInputModule, MatFormFieldModule, FormsModule],
+    MatCheckboxModule, MatInputModule, MatFormFieldModule, FormsModule, AgmCoreModule.forRoot({
+      apiKey: 'AIzaSyATDm1xNWVektHBJAAixT_j-b_4dqynlrw'
+    })],
   exports: [MatSelectionList, MatListOption],
   providers: [],
   bootstrap: [AppComponent],

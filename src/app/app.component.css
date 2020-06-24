@@ -89,3 +89,7 @@ body {
   background: none !important;
   margin:30px;
 }
+
+agm-map {
+  height: 500px;
+}

@@ -1,3 +1,4 @@
+/// <reference types="@types/googlemaps" />
 import { Component, ViewEncapsulation, ViewChild } from "@angular/core";
 import * as signalR from "@aspnet/signalr";
 import { HttpClient, HttpHeaders } from "@angular/common/http";
@@ -9,8 +10,11 @@ import {MatIconModule} from '@angular/material/icon';
 import { range } from 'rxjs';
 import { stringify } from 'querystring';
 
+import { OnInit } from '@angular/core'
 
-
+import { AfterViewInit, ElementRef } from '@angular/core';
+import { } from 'googlemaps';
+import { AgmCoreModule } from '@agm/core';
 
 
 interface SomkingDetector {
@@ -103,19 +107,34 @@ interface AlertNode {
 
 
 
-
 @Component({
   selector: "app-root",
   templateUrl: "./app.component.html",
   styleUrls: ["./app.component.css"],
   encapsulation: ViewEncapsulation.None,
+
 })
 
 
 
 
 
-export class AppComponent  {
+export class AppComponent{
+
+
+  //////////////// map settings
+
+  lat: number = 43.653908;
+  lng: number = -79.384293;
+
+  
+
+
+
+  //////////////// map settings
+
+
+
   panelOpenState = false;
   checked = false;
 
@@ -151,6 +170,7 @@ export class AppComponent  {
   //lonlat
   private readonly getLonLat = "https://nominatim.openstreetmap.org/lookup?osm_ids=R146006,W100093803,N240109189&format=json";
   public lonlatArr: string[];
+  public lonlatArr2: string[][]=[];
 
   public ALERTS_DATA:  AlertNode[] = [];
   public errorSubmit: string;
@@ -159,7 +179,10 @@ export class AppComponent  {
   public url: string;
 
   //lonlatmap
-  public mapLonLatArr: string[]=[];
+  public mapLonLatArr: string[] = [];
+  //for map
+  markers: Array<any> = [];
+   
 
 
   constructor(private readonly http: HttpClient) {
@@ -202,14 +225,23 @@ export class AppComponent  {
       console.log(Alerts)
       for (let key in Alerts["value"]) {
         let query = "$filter=PartitionKey%20eq%20'sample@sample.com'"
-        this.http.get<JSON>(this.getClientData + this.connectionStringStorage , this.httpOptions).subscribe(clientsData => {
-          console.log(Alerts["value"][key])
-          this.CreateAlerts(Alerts["value"][key], clientsData["value"]["0"])
-          this.mapLonLatArr.push("https://maps.google.com/maps?q=" + Alerts["value"][key].latitude + "%2C" + Alerts["value"][key].longitude + "&t=&z=13&ie=UTF8&iwloc=&output=embed");
+        this.http.get<JSON>(this.getClientData + this.connectionStringStorage, this.httpOptions).subscribe(clientsData => {
+          console.log(Alerts["value"][key]);
+          this.CreateAlerts(Alerts["value"][key], clientsData["value"]["0"]);
 
+          this.mapLonLatArr.push("https://maps.google.com/maps?q=" + Alerts["value"][key].latitude + "%2C" + Alerts["value"][key].longitude + "&t=&z=13&ie=UTF8&iwloc=&output=embed");
+          this.lonlatArr2[Alerts["value"][key].latitude] = Alerts["value"][key].longitude;
+          // for map:
+          this.markers.push({
+            lat: parseFloat(Alerts["value"][key].latitude), 
+            lng: parseFloat(Alerts["value"][key].longitude),
+            label: Alerts["value"][key].RowKey
+          })
         });
       }
       console.log(this.ALERTS_DATA)
+      console.log(this.lonlatArr2)
+      console.log(this.markers)
     }); 
 
 
@@ -237,6 +269,9 @@ export class AppComponent  {
         this.CreateHistoryAlerts(History["value"][key])
       }
     });
+
+
+
           
   }
   
@@ -260,7 +295,7 @@ export class AppComponent  {
 
   public tmpsrc :string;
   public changeIframe(id: number): void {
-   this.tmpsrc =this.mapLonLatArr[id];
+    this.tmpsrc =this.mapLonLatArr[id];
   }
 
 

@@ -1,9 +1,5 @@
 <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 
-<script>
-  document.getElementById("gmap_canvas").src = "https://wwf.org";
-
-</script>
 
 
 <div class="header">
@@ -74,20 +70,20 @@
 <div *ngIf="page=='mapPage'">
 
   <h1 class="alerthdr">Alerts On Map</h1>
-  <h3 class="alerthdr">Press on 'Directions' on the map to get directions to the desired destination</h3>
-
-  <div class="gmap_canvas">
-
-    <iframe width="1000" height="500" id="gmap_canvas" [src]="tmpsrc | safe" frameborder="1" scrolling="no" marginheight="0" marginwidth="0">
-    </iframe>
-
-  </div>
-
-  <script>
 
 
+  <h3 class="alerthdr">Press On Active Alert To Get Device ID</h3>
 
-  </script>
+
+  <agm-map [latitude]="32.2936086" [longitude]="34.9367102">
+    <agm-marker *ngFor="let marker of markers" [latitude]="marker['lat']" [longitude]="marker['lng']">
+      <agm-info-window>
+        <p>{{ marker.label }}</p>
+      </agm-info-window>
+    </agm-marker>
+</agm-map>
+
+
 
 </div>
 
