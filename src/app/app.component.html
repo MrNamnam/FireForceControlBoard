@@ -44,7 +44,7 @@
           <!-- Currently I am {{panelOpenState ? 'open' : 'closed'}} -->
         </mat-panel-description>
         <!--changing iframe according to the button id-->
-        <button id="dynamicId{{i}}" (click)="changeToPage('mapPage'); changeIframe(i)">Show On Map</button>
+        <button id="dynamicId{{i}}" (click)="changeToPage('mapPage'); showButton(i);getDirection()">Show On Map</button>
 
       </mat-expansion-panel-header>
 
@@ -75,13 +75,19 @@
   <h3 class="alerthdr">Press On Active Alert To Get Device ID</h3>
 
 
-  <agm-map [latitude]="32.2936086" [longitude]="34.9367102">
-    <agm-marker *ngFor="let marker of markers" [latitude]="marker['lat']" [longitude]="marker['lng']">
-      <agm-info-window>
-        <p>{{ marker.label }}</p>
-      </agm-info-window>
-    </agm-marker>
-</agm-map>
+  <agm-map [latitude]="lat" [longitude]="lng">
+    <div *ngIf="buttonid != -1">
+      <agm-direction [origin]="origin"
+                     [destination]="destination">
+      </agm-direction>
+     </div>
+
+      <agm-marker *ngFor="let marker of markers" [latitude]="marker['lat']" [longitude]="marker['lng']">
+        <agm-info-window>
+          <p>{{ marker.label }}</p>
+        </agm-info-window>
+      </agm-marker>
+  </agm-map>
 
 
 

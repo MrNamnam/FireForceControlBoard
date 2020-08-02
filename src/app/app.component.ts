@@ -120,21 +120,22 @@ interface AlertNode {
 
 
 export class AppComponent{
+  ////////// for map
+  public lat: Number = 32.2936086;
+  public lng: Number = 34.9367102;
+  public origin: any;
+  public destination: any;
+
+  getDirection() {
+    if (this.buttonid != '-1') {
+      this.origin = { lat: 29.6273534, lng: 34.8139778 };
+      this.destination = { lat: this.markers[this.buttonid].lat, lng: this.markers[this.buttonid].lng };
+    }
+   
+  }
 
 
-  //////////////// map settings
-
-  lat: number = 43.653908;
-  lng: number = -79.384293;
-
-  
-
-
-
-  //////////////// map settings
-
-
-
+  ////////// for map
   panelOpenState = false;
   checked = false;
 
@@ -163,6 +164,7 @@ export class AppComponent{
   public devices: string[] = ["bla", "bla1"];
   public events: JSON;
   public page: string;
+  public buttonid: string = '-1';
 
   // lina:
   public displayedColumns: string[] = ['id', 'city', 'country', 'lat', 'lon','details','bool','number'];
@@ -189,37 +191,6 @@ export class AppComponent{
     const negotiateBody = { UserId: "SomeUser" };
    
 
-
-
-    
-    
-      //lonlatmap
-
-    // this.http
-    //   .post<SignalRConnection>(this.negotiateUrl, JSON.stringify(negotiateBody), this.httpOptions)
-    //   .pipe(
-    //     map(connectionDetails =>
-    //       new signalR.HubConnectionBuilder().withUrl(`${connectionDetails.url}`, { accessTokenFactory: () => connectionDetails.accessToken }).build()
-    //     )
-    //   )
-    //   .subscribe(hub => {
-    //     this.hubConnection = hub;
-    //     hub.on("CounterUpdate", data => {
-    //       console.log(data);
-    //       this.counter = data.Count;
-    //     });
-    //     hub.start();
-    //   });
-
-    // this.http.get<Counter>(this.getCounterUrl + "/" + this.counterId).subscribe(cloudCounter => {
-    //   console.log(cloudCounter);
-    //   this.counter = cloudCounter.count;
-    // });
-
-    // this.http.get<string[]>(this.getIotDevicesUrl).subscribe(devices => {
-    //   console.log(devices);
-    //   this.devices = devices;
-    // });
 
     this.http.get<JSON>(this.getActiveEvents, this.httpOptions).subscribe(Alerts => {  
       console.log(Alerts)
@@ -290,13 +261,16 @@ export class AppComponent{
 
   public changeToPage(pageName: string): void {
     this.page = pageName
+    console.log(this.buttonid)
+
   }
 
 
-  public tmpsrc :string;
-  public changeIframe(id: number): void {
-    this.tmpsrc =this.mapLonLatArr[id];
+  public showButton(i: string): void {
+    this.buttonid = i
+    console.log(this.buttonid)
   }
+
 
 
   changeDisabled(): boolean{

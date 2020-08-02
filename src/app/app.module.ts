@@ -27,6 +27,7 @@ import { MonitorChartsComponent } from './monitor-charts/monitor-charts.componen
 
 import { AgmCoreModule } from '@agm/core';
 
+import { AgmDirectionModule } from 'agm-direction';
 
 @Pipe({
   name: 'safe'
@@ -48,7 +49,8 @@ export class SafePipe implements PipeTransform {
      MatListModule, CommonModule, MatTreeModule, MatIconModule, MatButtonModule, MatExpansionModule,
     MatCheckboxModule, MatInputModule, MatFormFieldModule, FormsModule, AgmCoreModule.forRoot({
       apiKey: 'AIzaSyATDm1xNWVektHBJAAixT_j-b_4dqynlrw'
-    })],
+    }),
+    AgmDirectionModule],
   exports: [MatSelectionList, MatListOption],
   providers: [],
   bootstrap: [AppComponent],
