@@ -48,16 +48,23 @@
 
       </mat-expansion-panel-header>
 
-        Is it False Alarm?
-        <mat-checkbox  (change)="changeDisabled()"></mat-checkbox>
+      Is it False Alarm?
+      <mat-checkbox (change)="changeDisabled()"></mat-checkbox>
       <input matInput type="number" [(ngModel)]="injured" placeholder="Number of injured" [disabled]="checked">
       <input matInput #message maxlength="50" [(ngModel)]="details" placeholder="Event details" [disabled]="checked">
-      <button mat-button  matSuffix mat-icon-button (click)="submitEvent(alert['alert_obj'].RowKey, alert['alert_obj'].PartitionKey,
+      <button mat-button matSuffix mat-icon-button (click)="submitEvent(alert['alert_obj'].RowKey, alert['alert_obj'].PartitionKey,
        alert['alert_obj'].longitude, alert['alert_obj'].latitude, alert['alert_obj'].time,
        checked, details, injured)">
         <mat-icon>send</mat-icon>
       </button>
     </mat-expansion-panel>
+
+    <button class="statButton" (click)="showStation('Eilat')">Eilat fire station</button>
+    <button class="statButton" (click)="showStation('Jaffa')">Jaffa fire station</button>
+    <button class="statButton" (click)="showStation('Haifa')">Haifa fire station</button>
+    <button class="statButton" (click)="showStation('Jerusalem')">Jerusalem fire station</button>
+    <button class="statButton" (click)="showStation('Beer Sheva')">Be'er Sheva fire station</button>
+
   </mat-accordion>
 </div>
 

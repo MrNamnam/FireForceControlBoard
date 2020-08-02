@@ -128,7 +128,21 @@ export class AppComponent{
 
   getDirection() {
     if (this.buttonid != '-1') {
-      this.origin = { lat: 29.6273534, lng: 34.8139778 };
+      if (this.station == 'Eilat') {
+        this.origin = { lat: 29.5661306, lng: 34.948351 };
+      }
+      else if (this.station == 'Jaffa') {
+        this.origin = { lat: 32.0483568, lng: 34.7537548 };
+      }
+      else if (this.station == 'Haifa') {
+        this.origin = { lat: 32.801523, lng: 34.983553 };
+      }
+      else if (this.station == 'Jerusalem') {
+        this.origin = { lat: 31.762427, lng: 35.199502 };
+      }
+      else if (this.station == "Beer Sheva") {
+        this.origin = { lat: 31.263284, lng: 34.820021 };
+      }
       this.destination = { lat: this.markers[this.buttonid].lat, lng: this.markers[this.buttonid].lng };
     }
    
@@ -165,6 +179,7 @@ export class AppComponent{
   public events: JSON;
   public page: string;
   public buttonid: string = '-1';
+  public station: string = '-1';
 
   // lina:
   public displayedColumns: string[] = ['id', 'city', 'country', 'lat', 'lon','details','bool','number'];
@@ -269,6 +284,10 @@ export class AppComponent{
   public showButton(i: string): void {
     this.buttonid = i
     console.log(this.buttonid)
+  }
+  
+  public showStation(i: string): void {
+    this.station = i
   }
 
 
