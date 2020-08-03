@@ -120,6 +120,7 @@ interface AlertNode {
 
 
 export class AppComponent{
+<<<<<<< HEAD
 
 
   //////////////// map settings
@@ -135,6 +136,50 @@ export class AppComponent{
 
 
 
+=======
+  ////////// for map
+  public dis: String ;
+  public time: number ;
+  public h: String ;
+  public m: String ;
+  public lat: Number = 32.2936086;
+  public lng: Number = 34.9367102;
+  public origin: any;
+  public destination: any;
+  getDirection() {
+    if (this.buttonid != '-1') {
+      if (this.station == 'Eilat') {
+        this.origin = { lat: 29.5661306, lng: 34.948351 };
+      }
+      else if (this.station == 'Jaffa') {
+        this.origin = { lat: 32.0483568, lng: 34.7537548 };
+      }
+      else if (this.station == 'Haifa') {
+        this.origin = { lat: 32.801523, lng: 34.983553 };
+      }
+      else if (this.station == 'Jerusalem') {
+        this.origin = { lat: 31.762427, lng: 35.199502 };
+      }
+      else if (this.station == "Beer Sheva") {
+        this.origin = { lat: 31.263284, lng: 34.820021 };
+      }
+      this.destination = { lat: this.markers[this.buttonid].lat, lng: this.markers[this.buttonid].lng };
+    }
+    var _kCord = new google.maps.LatLng(this.origin.lat, this.origin.lng);
+    var _pCord = new google.maps.LatLng(this.destination.lat, this.destination.lng);
+    this.dis = google.maps.geometry.spherical.computeDistanceBetween(_kCord, _pCord).toFixed(3);
+    this.time = (google.maps.geometry.spherical.computeDistanceBetween(_kCord, _pCord) / 70000);
+    this.h = this.time.toFixed(3);
+    this.m = ((this.time)*60).toFixed(3);
+    console.log(this.dis);
+    console.log(this.h);
+    console.log(this.m);
+  }
+
+
+
+  ////////// for map
+>>>>>>> 686c3776d3b19610218b3c79662ddf2deca92380
   panelOpenState = false;
   checked = false;
 
