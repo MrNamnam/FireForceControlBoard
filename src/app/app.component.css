@@ -113,3 +113,7 @@ agm-map {
   height: 500px;
 }
 
+.dist {
+  text-align: center;
+  color: blue;
+}

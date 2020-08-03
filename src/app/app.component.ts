@@ -121,11 +121,14 @@ interface AlertNode {
 
 export class AppComponent{
   ////////// for map
+  public dis: String ;
+  public time: number ;
+  public h: String ;
+  public m: String ;
   public lat: Number = 32.2936086;
   public lng: Number = 34.9367102;
   public origin: any;
   public destination: any;
-
   getDirection() {
     if (this.buttonid != '-1') {
       if (this.station == 'Eilat') {
@@ -145,8 +148,17 @@ export class AppComponent{
       }
       this.destination = { lat: this.markers[this.buttonid].lat, lng: this.markers[this.buttonid].lng };
     }
-   
+    var _kCord = new google.maps.LatLng(this.origin.lat, this.origin.lng);
+    var _pCord = new google.maps.LatLng(this.destination.lat, this.destination.lng);
+    this.dis = google.maps.geometry.spherical.computeDistanceBetween(_kCord, _pCord).toFixed(3);
+    this.time = (google.maps.geometry.spherical.computeDistanceBetween(_kCord, _pCord) / 70000);
+    this.h = this.time.toFixed(3);
+    this.m = ((this.time)*60).toFixed(3);
+    console.log(this.dis);
+    console.log(this.h);
+    console.log(this.m);
   }
+
 
 
   ////////// for map
