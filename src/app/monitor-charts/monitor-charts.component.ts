@@ -1,5 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import * as CanvasJs from '../canvasjs-2.3.2/canvasjs.min';
+import { HttpClient, HttpHeaders } from "@angular/common/http";
+
+interface eventsDay {
+  // x: number;
+  y: number;
+}
+
 
 
 @Component({
@@ -9,7 +16,26 @@ import * as CanvasJs from '../canvasjs-2.3.2/canvasjs.min';
 })
 export class MonitorChartsComponent implements OnInit {
 
-  constructor() { }
+  private readonly httpOptions = { headers: new HttpHeaders({ "Content-Type": "application/json" }) };
+  private readonly aggEventsDay = "http://localhost:7071/api/agg-event-day"
+
+  public EventsDayCount:  eventsDay[] = [];
+
+  constructor(private readonly http: HttpClient) {
+    // this.http.post<JSON>(this.aggEventsDay, this.httpOptions).subscribe(eventsDaysArray => {
+    //   console.log(eventsDaysArray)
+    //   for (let key in eventsDaysArray){
+    //     this.EventsDayCount.push({y: eventsDaysArray[key]["y"]})
+    //   }
+    //   console.log(this.EventsDayCount)
+      // this.lonlatArr = lonlat["0"]["address"];
+      //  this.CreateHistoryAlerts(lonlat["0"])
+      // console.log(this.lonlatArr);
+      // console.log(this.mapLonLatArr);
+
+    // });
+
+   }
 
   ngOnInit(): void {
     this.Charts()
@@ -69,24 +95,27 @@ export class MonitorChartsComponent implements OnInit {
       dataPoints.push({ y: y});
     }
     let chart_plot = new CanvasJs.Chart("chartContainerPlot", {
-      zoomEnabled: true,
-      animationEnabled: true,
       exportEnabled: true,
-      title: {
-        text: "Performance Demo - 10000 DataPoints"
-      },
-      subtitles:[{
-        text: "Try Zooming and Panning"
-      }],
-      data: [
-      {
-        type: "line",                
-        dataPoints: dataPoints
-      }]
+		  title:{
+			  text:"Live Chart with Data-Points from External JSON"
+		  },
+		  data: [{
+			  type: "spline",
+			  dataPoints : this.EventsDayCount,
+		  }]
+	  });
+	
+    this.http.post<JSON>(this.aggEventsDay, this.httpOptions).subscribe(eventsDaysArray => {
+      console.log(eventsDaysArray)
+      for (let key in eventsDaysArray){
+        this.EventsDayCount.push({y: eventsDaysArray[key]["y"]})
+        // ,x:  +(eventsDaysArray[key]["x"].substring(5,7).concat(eventsDaysArray[key]["x"].substring(8,10)))})
+      }
+      console.log(this.EventsDayCount)
+      chart_plot.render();
     });
     chart_col.render(); 
     chart_cake.render();
-    chart_plot.render();
   }
 
 }
