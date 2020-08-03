@@ -10,7 +10,7 @@
   <span class="menu">
     <button class="menuButton" (click)="changeToPage('alertsPage')">Alerts</button>
     <button class="menuButton" (click)="changeToPage('monitorPage')">Devices</button>
-    <button class="menuButton" (click)="changeToPage('mapPage')">Map</button>
+    <button class="menuButton" (click)="changeToPage('mapPage');showButton('-1')">Map</button>
     <button class="menuButton" (click)="changeToPage('historyAlertsPage')">Alerts History</button>
     <button class="menuButton" (click)="changeToPage('aboutPage')">About</button>
   </span>
@@ -44,20 +44,27 @@
           <!-- Currently I am {{panelOpenState ? 'open' : 'closed'}} -->
         </mat-panel-description>
         <!--changing iframe according to the button id-->
-        <button id="dynamicId{{i}}" (click)="changeToPage('mapPage'); changeIframe(i)">Show On Map</button>
+        <button id="dynamicId{{i}}" (click)="changeToPage('mapPage'); showButton(i);getDirection()">Show On Map</button>
 
       </mat-expansion-panel-header>
 
-        Is it False Alarm?
-        <mat-checkbox  (change)="changeDisabled()"></mat-checkbox>
+      Is it False Alarm?
+      <mat-checkbox (change)="changeDisabled()"></mat-checkbox>
       <input matInput type="number" [(ngModel)]="injured" placeholder="Number of injured" [disabled]="checked">
       <input matInput #message maxlength="50" [(ngModel)]="details" placeholder="Event details" [disabled]="checked">
-      <button mat-button  matSuffix mat-icon-button (click)="submitEvent(alert['alert_obj'].RowKey, alert['alert_obj'].PartitionKey,
+      <button mat-button matSuffix mat-icon-button (click)="submitEvent(alert['alert_obj'].RowKey, alert['alert_obj'].PartitionKey,
        alert['alert_obj'].longitude, alert['alert_obj'].latitude, alert['alert_obj'].time,
        checked, details, injured)">
         <mat-icon>send</mat-icon>
       </button>
     </mat-expansion-panel>
+
+    <button class="statButton" (click)="showStation('Eilat')">Eilat fire station</button>
+    <button class="statButton" (click)="showStation('Jaffa')">Jaffa fire station</button>
+    <button class="statButton" (click)="showStation('Haifa')">Haifa fire station</button>
+    <button class="statButton" (click)="showStation('Jerusalem')">Jerusalem fire station</button>
+    <button class="statButton" (click)="showStation('Beer Sheva')">Be'er Sheva fire station</button>
+
   </mat-accordion>
 </div>
 
@@ -75,13 +82,19 @@
   <h3 class="alerthdr">Press On Active Alert To Get Device ID</h3>
 
 
-  <agm-map [latitude]="32.2936086" [longitude]="34.9367102">
-    <agm-marker *ngFor="let marker of markers" [latitude]="marker['lat']" [longitude]="marker['lng']">
-      <agm-info-window>
-        <p>{{ marker.label }}</p>
-      </agm-info-window>
-    </agm-marker>
-</agm-map>
+  <agm-map [latitude]="lat" [longitude]="lng">
+    <div *ngIf="buttonid != -1">
+      <agm-direction [origin]="origin"
+                     [destination]="destination">
+      </agm-direction>
+     </div>
+
+      <agm-marker *ngFor="let marker of markers" [latitude]="marker['lat']" [longitude]="marker['lng']">
+        <agm-info-window>
+          <p>{{ marker.label }}</p>
+        </agm-info-window>
+      </agm-marker>
+  </agm-map>
 
 
 

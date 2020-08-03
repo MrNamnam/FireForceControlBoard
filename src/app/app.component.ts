@@ -141,7 +141,7 @@ export class AppComponent{
   
 
   private readonly httpOptions = { headers: new HttpHeaders({ "Content-Type": "application/json" }) };
-  private readonly negotiateUrl = "https://cors-anywhere.herokuapp.com/https://counterfunctions20200425175523.azurewebsites.net/api/negotiate";
+  private readonly negotiateUrl = "http://localhost:7071/api/negotiate";
   private readonly getCounterUrl = "https://cors-anywhere.herokuapp.com/https://counterfunctions20200425175523.azurewebsites.net/api/get-counter";
   private readonly updateCounterUrl = "https://cors-anywhere.herokuapp.com/https://counterfunctions20200425175523.azurewebsites.net/api/update-counter";
   private readonly getIotDevicesUrl = "https://cors-anywhere.herokuapp.com/https://counterfunctions20200425175523.azurewebsites.net/api/devices";
@@ -186,30 +186,29 @@ export class AppComponent{
 
 
   constructor(private readonly http: HttpClient) {
-    const negotiateBody = { UserId: "SomeUser" };
+    const negotiateBody = { UserId: "FireWeb" };
    
 
 
 
     
     
-      //lonlatmap
+  // //     //lonlatmap
 
-    // this.http
-    //   .post<SignalRConnection>(this.negotiateUrl, JSON.stringify(negotiateBody), this.httpOptions)
-    //   .pipe(
-    //     map(connectionDetails =>
-    //       new signalR.HubConnectionBuilder().withUrl(`${connectionDetails.url}`, { accessTokenFactory: () => connectionDetails.accessToken }).build()
-    //     )
-    //   )
-    //   .subscribe(hub => {
-    //     this.hubConnection = hub;
-    //     hub.on("CounterUpdate", data => {
-    //       console.log(data);
-    //       this.counter = data.Count;
-    //     });
-    //     hub.start();
-    //   });
+    this.http
+      .post<SignalRConnection>(this.negotiateUrl, JSON.stringify(negotiateBody), this.httpOptions)
+      .pipe(
+        map(connectionDetails =>
+          new signalR.HubConnectionBuilder().withUrl(`${connectionDetails.url}`, { accessTokenFactory: () => connectionDetails.accessToken }).build()
+        )
+      )
+      .subscribe(hub => {
+        this.hubConnection = hub;
+        hub.on("NewAlert", data => {
+          console.log(data);
+        });
+        hub.start();
+      });
 
     // this.http.get<Counter>(this.getCounterUrl + "/" + this.counterId).subscribe(cloudCounter => {
     //   console.log(cloudCounter);
@@ -221,28 +220,28 @@ export class AppComponent{
     //   this.devices = devices;
     // });
 
-    this.http.get<JSON>(this.getActiveEvents, this.httpOptions).subscribe(Alerts => {  
-      console.log(Alerts)
-      for (let key in Alerts["value"]) {
-        let query = "$filter=PartitionKey%20eq%20'sample@sample.com'"
-        this.http.get<JSON>(this.getClientData + this.connectionStringStorage, this.httpOptions).subscribe(clientsData => {
-          console.log(Alerts["value"][key]);
-          this.CreateAlerts(Alerts["value"][key], clientsData["value"]["0"]);
+    // this.http.get<JSON>(this.getActiveEvents, this.httpOptions).subscribe(Alerts => {  
+    //   console.log(Alerts)
+    //   for (let key in Alerts["value"]) {
+    //     let query = "$filter=PartitionKey%20eq%20'sample@sample.com'"
+    //     this.http.get<JSON>(this.getClientData + this.connectionStringStorage, this.httpOptions).subscribe(clientsData => {
+    //       console.log(Alerts["value"][key]);
+    //       this.CreateAlerts(Alerts["value"][key], clientsData["value"]["0"]);
 
-          this.mapLonLatArr.push("https://maps.google.com/maps?q=" + Alerts["value"][key].latitude + "%2C" + Alerts["value"][key].longitude + "&t=&z=13&ie=UTF8&iwloc=&output=embed");
-          this.lonlatArr2[Alerts["value"][key].latitude] = Alerts["value"][key].longitude;
-          // for map:
-          this.markers.push({
-            lat: parseFloat(Alerts["value"][key].latitude), 
-            lng: parseFloat(Alerts["value"][key].longitude),
-            label: Alerts["value"][key].RowKey
-          })
-        });
-      }
-      console.log(this.ALERTS_DATA)
-      console.log(this.lonlatArr2)
-      console.log(this.markers)
-    }); 
+    //       this.mapLonLatArr.push("https://maps.google.com/maps?q=" + Alerts["value"][key].latitude + "%2C" + Alerts["value"][key].longitude + "&t=&z=13&ie=UTF8&iwloc=&output=embed");
+    //       this.lonlatArr2[Alerts["value"][key].latitude] = Alerts["value"][key].longitude;
+    //       // for map:
+    //       this.markers.push({
+    //         lat: parseFloat(Alerts["value"][key].latitude), 
+    //         lng: parseFloat(Alerts["value"][key].longitude),
+    //         label: Alerts["value"][key].RowKey
+    //       })
+    //     });
+    //   }
+    //   console.log(this.ALERTS_DATA)
+    //   console.log(this.lonlatArr2)
+    //   console.log(this.markers)
+    // }); 
 
 
 
@@ -332,10 +331,12 @@ export class AppComponent{
       this.http.post(this.addEvent + this.url, this.httpOptions).toPromise()
       .catch(e =>
         this.errorSubmit = stringify(e));
+      
+      console.log("heredfsadsadsad")
 
-      // this.http.get<JSON>(this.deleteCurrent + "/" + RowKey + "/" + PartitionKey
-      // , this.httpOptions) .subscribe(() => {
-      //     console.log("delete alert");});
+      this.http.get<JSON>(this.deleteCurrent + "/" + RowKey + "/" + PartitionKey
+      , this.httpOptions) .subscribe(() => {
+          console.log("delete alert");});
 
     
 
