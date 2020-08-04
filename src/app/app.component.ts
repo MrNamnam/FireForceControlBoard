@@ -222,6 +222,37 @@ export class AppComponent{
    
 
 
+
+
+    //lonlat
+    this.http.get<JSON>(this.getLonLat, this.httpOptions).subscribe(lonlat => {
+      console.log(lonlat)
+      this.lonlatArr = lonlat["0"]["address"];
+      //  this.CreateHistoryAlerts(lonlat["0"])
+      console.log(this.lonlatArr);
+      console.log(this.mapLonLatArr);
+
+    });
+
+
+   this.GetCurrentAlerts()
+
+
+
+
+    this.http.get<JSON>(this.getHistoryEvents, this.httpOptions).subscribe(History => {
+      for (let key in History["value"]) {
+        console.log(History)
+        this.CreateHistoryAlerts(History["value"][key])
+      }
+    });
+
+
+
+          
+  }
+  
+  public GetCurrentAlerts(): void{
     this.http.get<JSON>(this.getActiveEvents, this.httpOptions).subscribe(Alerts => {  
       console.log(Alerts)
       for (let key in Alerts["value"]) {
@@ -244,38 +275,7 @@ export class AppComponent{
       console.log(this.lonlatArr2)
       console.log(this.markers)
     }); 
-
-
-
-
-
-
-
-    //lonlat
-    this.http.get<JSON>(this.getLonLat, this.httpOptions).subscribe(lonlat => {
-      console.log(lonlat)
-      this.lonlatArr = lonlat["0"]["address"];
-      //  this.CreateHistoryAlerts(lonlat["0"])
-      console.log(this.lonlatArr);
-      console.log(this.mapLonLatArr);
-
-    });
-
-
-
-
-    this.http.get<JSON>(this.getHistoryEvents, this.httpOptions).subscribe(History => {
-      for (let key in History["value"]) {
-        console.log(History)
-        this.CreateHistoryAlerts(History["value"][key])
-      }
-    });
-
-
-
-          
   }
-  
 
   public CreateAlerts(alertElement, clientElement): void {
     console.log(alertElement)
@@ -341,12 +341,11 @@ export class AppComponent{
       .catch(e =>
         this.errorSubmit = stringify(e));
 
-      // this.http.get<JSON>(this.deleteCurrent + "/" + RowKey + "/" + PartitionKey
-      // , this.httpOptions) .subscribe(() => {
-      //     console.log("delete alert");});
+      this.http.get<JSON>(this.deleteCurrent + "/" + RowKey + "/" + PartitionKey
+      , this.httpOptions) .subscribe(() => {
+          console.log("delete alert");});
 
-    
-
+     this.GetCurrentAlerts()
 
     }
     
