@@ -91,20 +91,26 @@
     <p *ngIf="buttonid != -1">time in hours: {{h}}</p>
     <p *ngIf="buttonid != -1">time in minutes: {{m}}</p>
   </div>
-    <agm-map [latitude]="lat" [longitude]="lng">
-      <div *ngIf="buttonid != -1">
-        <agm-direction [origin]="origin"
-                       [destination]="destination">
+  <agm-map [latitude]="lat" [longitude]="lng">
+    <div *ngIf="buttonid != -1">
+      <agm-direction [origin]="origin"
+                     [destination]="destination">
 
-        </agm-direction>
-      </div>
-
-      <agm-marker *ngFor="let marker of markers" [latitude]="marker['lat']" [longitude]="marker['lng']">
-        <agm-info-window>
-          <p>{{ marker.label }}</p>
-        </agm-info-window>
-      </agm-marker>
-    </agm-map>
+      </agm-direction>
+    </div>
+    <!--
+  <agm-marker *ngFor="let marker of markers" [latitude]="marker['lat']" [longitude]="marker['lng']">
+    <agm-info-window>
+      <p>{{ marker.label }}</p>
+    </agm-info-window>
+  </agm-marker>
+    -->
+    <agm-marker *ngFor="let marker of ALERTS_DATA" [latitude]="marker.alert_obj.latitude" [longitude]="marker.alert_obj.longitude">
+      <agm-info-window>
+        <p>{{ marker.alert_obj.RowKey }}</p>
+      </agm-info-window>
+    </agm-marker>
+  </agm-map>
 
 
 
@@ -119,24 +125,24 @@
   <!-- lina : -->
   <div *ngIf="page=='historyAlertsPage'">
     <h1 class="alerthdr">Alerts History</h1>
-    <mat-table [dataSource]="dataSource" class="mat-elevation-z8">
+    <mat-table [dataSource]="dataSource[0]" class="mat-elevation-z8">
 
       <!-- Position Column -->
       <ng-container matColumnDef="id">
         <mat-header-cell *matHeaderCellDef><b> Device ID </b></mat-header-cell>
-        <mat-cell *matCellDef="let element"> {{element["PartitionKey"]}} </mat-cell>
-      </ng-container>
-
-      <!-- lonlat Column -->
-      <ng-container matColumnDef="country">
-        <mat-header-cell *matHeaderCellDef><b> Country </b></mat-header-cell>
-        <mat-cell *matCellDef> {{lonlatArr["country"]}} </mat-cell>
+        <mat-cell *matCellDef="let element"> {{element["device_id"]}} </mat-cell>
       </ng-container>
 
       <!-- Name Column -->
       <ng-container matColumnDef="city">
         <mat-header-cell *matHeaderCellDef><b> City </b></mat-header-cell>
-        <mat-cell *matCellDef="let element"> {{element["adress"]}} </mat-cell>
+        <mat-cell *matCellDef="let element"> {{element["city"]}} </mat-cell>
+      </ng-container>
+
+      <!-- lonlat Column -->
+      <ng-container matColumnDef="country">
+        <mat-header-cell *matHeaderCellDef><b> Country </b></mat-header-cell>
+        <mat-cell *matCellDef="let element"> {{element["country"]}} </mat-cell>
       </ng-container>
 
 
