@@ -120,6 +120,9 @@ interface AlertNode {
 
 
 export class AppComponent{
+  onChange(deviceValue) {
+   this.showStation(deviceValue);
+  }
   ////////// for map
   public dis: String ;
   public time: number ;
@@ -134,7 +137,7 @@ export class AppComponent{
       if (this.station == 'Eilat') {
         this.origin = { lat: 29.5661306, lng: 34.948351 };
       }
-      else if (this.station == 'Jaffa') {
+      else if (this.station == 'Jaffa' || this.station=='-1') {//default station is Jaffa
         this.origin = { lat: 32.0483568, lng: 34.7537548 };
       }
       else if (this.station == 'Haifa') {

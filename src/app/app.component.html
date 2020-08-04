@@ -20,6 +20,17 @@
 <div *ngIf="page=='alertsPage'">
   <mat-accordion>
     <h1 class="alerthdr">Urgent Alerts</h1>
+
+    <label for="station">Choose a Fire-Station:</label>
+    <select (change)="onChange($event.target.value)">
+      <option></option>
+      <option value="Eilat">Eilat fire station</option>
+      <option value="Jaffa">Jaffa fire station</option>
+      <option value="Haifa">Haifa fire station</option>
+      <option value="Jerusalem">Jerusalem fire station</option>
+      <option value="Beer Sheva">Be'er Sheva fire station</option>
+    </select>
+
     <mat-expansion-panel *ngFor="let alert of ALERTS_DATA; let i = index;"
                          (opened)="panelOpenState = true"
                          (closed)="panelOpenState = false">
@@ -59,11 +70,6 @@
       </button>
     </mat-expansion-panel>
 
-    <button class="statButton" (click)="showStation('Eilat')">Eilat fire station</button>
-    <button class="statButton" (click)="showStation('Jaffa')">Jaffa fire station</button>
-    <button class="statButton" (click)="showStation('Haifa')">Haifa fire station</button>
-    <button class="statButton" (click)="showStation('Jerusalem')">Jerusalem fire station</button>
-    <button class="statButton" (click)="showStation('Beer Sheva')">Be'er Sheva fire station</button>
 
   </mat-accordion>
 </div>
