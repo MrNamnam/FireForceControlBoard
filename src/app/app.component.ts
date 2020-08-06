@@ -146,7 +146,10 @@ export class AppComponent{
       else if (this.station == "Beer Sheva") {
         this.origin = { lat: 31.263284, lng: 34.820021 };
       }
-      this.destination = { lat: this.markers[this.buttonid].lat, lng: this.markers[this.buttonid].lng };
+      console.log(this.ALERTS_DATA[this.buttonid].alert_obj.latitude);
+      var lat1: number = +this.ALERTS_DATA[this.buttonid].alert_obj.latitude;
+      var lon1: number = +this.ALERTS_DATA[this.buttonid].alert_obj.longitude;
+      this.destination = { lat: lat1, lng: lon1  };
     }
     var _kCord = new google.maps.LatLng(this.origin.lat, this.origin.lng);
     var _pCord = new google.maps.LatLng(this.destination.lat, this.destination.lng);
@@ -180,7 +183,7 @@ export class AppComponent{
   //?$filter=RowKey%20eq%20"
 
   // lina:
-  private readonly getHistoryEvents = "https://cors-anywhere.herokuapp.com/https://smokingdetectors.table.core.windows.net/DetectorsEvents?sv=2019-10-10&ss=t&srt=sco&sp=rwdlacu&se=2020-08-08T06:17:45Z&st=2020-06-02T22:17:45Z&spr=https&sig=ez4xdZR94dP9%2FB8Czup%2FRXLYaa%2BfWilA%2BOfi9rgCZqU%3D"
+  private readonly getHistoryEvents = "http://localhost:7071/api/ListEvents"
 
   private readonly connectionStringStorage = "?sv=2019-10-10&ss=t&srt=sco&sp=rwdlacu&se=2020-08-08T06:17:45Z&st=2020-06-02T22:17:45Z&spr=https&sig=ez4xdZR94dP9%2FB8Czup%2FRXLYaa%2BfWilA%2BOfi9rgCZqU%3D"
   private readonly counterId = 1;
@@ -196,21 +199,15 @@ export class AppComponent{
   // lina:
   public displayedColumns: string[] = ['id', 'city', 'country', 'lat', 'lon','details','bool','number'];
   public dataSource: object[] = [];
-  //lonlat
-  private readonly getLonLat = "https://nominatim.openstreetmap.org/lookup?osm_ids=R146006,W100093803,N240109189&format=json";
-  public lonlatArr: string[];
-  public lonlatArr2: string[][]=[];
-
+ 
   public ALERTS_DATA:  AlertNode[] = [];
   public errorSubmit: string;
   public details: string = null
   public injured: number = null;
   public url: string;
 
-  //lonlatmap
-  public mapLonLatArr: string[] = [];
-  //for map
-  markers: Array<any> = [];
+
+
    
 
 
@@ -236,15 +233,7 @@ export class AppComponent{
 
 
 
-    //lonlat
-    this.http.get<JSON>(this.getLonLat, this.httpOptions).subscribe(lonlat => {
-      console.log(lonlat)
-      this.lonlatArr = lonlat["0"]["address"];
-      //  this.CreateHistoryAlerts(lonlat["0"])
-      console.log(this.lonlatArr);
-      console.log(this.mapLonLatArr);
 
-    });
 
 
    this.GetCurrentAlerts()
@@ -253,10 +242,10 @@ export class AppComponent{
 
 
     this.http.get<JSON>(this.getHistoryEvents, this.httpOptions).subscribe(History => {
-      for (let key in History["value"]) {
-        console.log(History)
-        this.CreateHistoryAlerts(History["value"][key])
-      }
+      console.log(history)
+      this.CreateHistoryAlerts(History)
+      console.log(this.dataSource)
+
     });
 
 
@@ -276,19 +265,10 @@ export class AppComponent{
             this.CreateAlerts(Alerts["value"][key], clientsData);
           }
 
-          this.mapLonLatArr.push("https://maps.google.com/maps?q=" + Alerts["value"][key].latitude + "%2C" + Alerts["value"][key].longitude + "&t=&z=13&ie=UTF8&iwloc=&output=embed");
-          this.lonlatArr2[Alerts["value"][key].latitude] = Alerts["value"][key].longitude;
-          // for map:
-          this.markers.push({
-            lat: parseFloat(Alerts["value"][key].latitude), 
-            lng: parseFloat(Alerts["value"][key].longitude),
-            label: Alerts["value"][key].RowKey
-          })
+
         });
       }
       console.log(this.ALERTS_DATA)
-      console.log(this.lonlatArr2)
-      console.log(this.markers)
     }); 
   }
 

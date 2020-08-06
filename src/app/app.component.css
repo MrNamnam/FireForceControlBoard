@@ -117,3 +117,15 @@ agm-map {
   text-align: center;
   color: blue;
 }
+
+.mat-checkbox .mat-checkbox-frame {
+  border-color: black;
+  background-color: dimgrey;
+ 
+}
+.mat-checkbox-indeterminate.mat-accent .mat-checkbox-background, .mat-checkbox-checked.mat-accent .mat-checkbox-background {
+  margin-top: 1px;
+  margin-left: 1px;
+  width: 18px;
+  height: 18px;
+}
