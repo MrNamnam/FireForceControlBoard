@@ -120,9 +120,6 @@ interface AlertNode {
 
 
 export class AppComponent{
-  onChange(deviceValue) {
-   this.showStation(deviceValue);
-  }
   ////////// for map
   public dis: String ;
   public time: number ;
@@ -137,7 +134,7 @@ export class AppComponent{
       if (this.station == 'Eilat') {
         this.origin = { lat: 29.5661306, lng: 34.948351 };
       }
-      else if (this.station == 'Jaffa' || this.station=='-1') {//default station is Jaffa
+      else if (this.station == 'Jaffa') {
         this.origin = { lat: 32.0483568, lng: 34.7537548 };
       }
       else if (this.station == 'Haifa') {
@@ -174,13 +171,13 @@ export class AppComponent{
   
 
   private readonly httpOptions = { headers: new HttpHeaders({ "Content-Type": "application/json" }) };
-  private readonly negotiateUrl = "https://cors-anywhere.herokuapp.com/https://counterfunctions20200425175523.azurewebsites.net/api/negotiate";
+  private readonly negotiateUrl = "http://localhost:7071/api/negotiate";
   private readonly getCounterUrl = "https://cors-anywhere.herokuapp.com/https://counterfunctions20200425175523.azurewebsites.net/api/get-counter";
   private readonly updateCounterUrl = "https://cors-anywhere.herokuapp.com/https://counterfunctions20200425175523.azurewebsites.net/api/update-counter";
   private readonly getIotDevicesUrl = "https://cors-anywhere.herokuapp.com/https://counterfunctions20200425175523.azurewebsites.net/api/devices";
   private readonly pushButtonUrl = "https://cors-anywhere.herokuapp.com/https://counterfunctions20200425175523.azurewebsites.net/api/pushButton";
   private readonly getActiveEvents = "https://cors-anywhere.herokuapp.com/https://smokingdetectors.table.core.windows.net/CurrentAlerts?sv=2019-10-10&ss=t&srt=sco&sp=rwdlacu&se=2020-08-08T06:17:45Z&st=2020-06-02T22:17:45Z&spr=https&sig=ez4xdZR94dP9%2FB8Czup%2FRXLYaa%2BfWilA%2BOfi9rgCZqU%3D"
-  private readonly getClientData = "https://cors-anywhere.herokuapp.com/https://smokingdetectors.table.core.windows.net/ClientsTable()"
+  private readonly getClientData = "http://localhost:7071/api/match-alert-to-client/"
   private readonly addEvent = "http://localhost:7071/api/add-event"
   private readonly deleteCurrent = "http://localhost:7071/api/delete-alert"
   //?$filter=RowKey%20eq%20"
@@ -215,9 +212,24 @@ export class AppComponent{
 
 
   constructor(private readonly http: HttpClient) {
-    const negotiateBody = { UserId: "SomeUser" };
+    const negotiateBody = { UserId: "FireWeb" };
    
-
+    this.http
+      .post<SignalRConnection>(this.negotiateUrl, JSON.stringify(negotiateBody), this.httpOptions)
+      .pipe(
+        map(connectionDetails =>
+          new signalR.HubConnectionBuilder().withUrl(`${connectionDetails.url}`, { accessTokenFactory: () => connectionDetails.accessToken }).build(),
+        )
+      )
+      .subscribe(hub => {
+        this.hubConnection = hub;
+        hub.on("NewAlert", data => {
+          console.log(data)
+          let alert : ClientsObject = data
+          this.SignalrUpdatingNewCurrentAlert(alert);
+        });
+        hub.start();
+      });
 
 
 
@@ -245,10 +257,13 @@ export class AppComponent{
     this.http.get<JSON>(this.getActiveEvents, this.httpOptions).subscribe(Alerts => {  
       console.log(Alerts)
       for (let key in Alerts["value"]) {
-        let query = "$filter=PartitionKey%20eq%20'sample@sample.com'"
-        this.http.get<JSON>(this.getClientData + this.connectionStringStorage, this.httpOptions).subscribe(clientsData => {
-          console.log(Alerts["value"][key]);
-          this.CreateAlerts(Alerts["value"][key], clientsData["value"]["0"]);
+        let rowkey =  Alerts["value"][key].PartitionKey // partionkey of alerts is the email  
+        console.log(rowkey);
+        this.http.get<JSON>(this.getClientData + rowkey, this.httpOptions).subscribe(clientsData => {
+          console.log(clientsData);
+          if(clientsData != null){
+            this.CreateAlerts(Alerts["value"][key], clientsData);
+          }
 
 
         });
@@ -262,6 +277,22 @@ export class AppComponent{
     console.log(clientElement)
     this.ALERTS_DATA.push({ alert_obj: alertElement, client_obj: clientElement })
   }
+
+  public SignalrUpdatingNewCurrentAlert(alert){
+    for (let key in this.ALERTS_DATA){
+      if((this.ALERTS_DATA[key]["alert_obj"].PartitionKey = alert["PartitionKey"]) & (this.ALERTS_DATA[key]["alert_obj"].RowKey = alert["RowKey"])){
+        this.ALERTS_DATA[key]["alert_obj"] = alert
+        return 
+      }
+    }
+    this.http.get<JSON>(this.getClientData + alert.PartitionKey, this.httpOptions).subscribe(clientsData => {
+      console.log(clientsData);
+      if(clientsData != null){
+        this.CreateAlerts(alert, clientsData);
+      }
+  }); 
+}
+
 
   public CreateHistoryAlerts(event): void{
     console.log(event)
