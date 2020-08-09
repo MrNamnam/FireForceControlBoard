@@ -120,6 +120,7 @@ interface AlertNode {
 
 
 export class AppComponent{
+
   ////////// for map
   public dis: String ;
   public time: number ;
@@ -130,6 +131,7 @@ export class AppComponent{
   public origin: any;
   public destination: any;
   getDirection() {
+    this.origin = { lat: 32.0483568, lng: 34.7537548 };//default is jaffa
     if (this.buttonid != '-1') {
       if (this.station == 'Eilat') {
         this.origin = { lat: 29.5661306, lng: 34.948351 };
@@ -146,11 +148,12 @@ export class AppComponent{
       else if (this.station == "Beer Sheva") {
         this.origin = { lat: 31.263284, lng: 34.820021 };
       }
-      console.log(this.ALERTS_DATA[this.buttonid].alert_obj.latitude);
-      var lat1: number = +this.ALERTS_DATA[this.buttonid].alert_obj.latitude;
-      var lon1: number = +this.ALERTS_DATA[this.buttonid].alert_obj.longitude;
-      this.destination = { lat: lat1, lng: lon1  };
     }
+    console.log(this.ALERTS_DATA[this.buttonid].alert_obj.latitude);
+    var lat1: number = +this.ALERTS_DATA[this.buttonid].alert_obj.latitude;
+    var lon1: number = +this.ALERTS_DATA[this.buttonid].alert_obj.longitude;
+    this.destination = { lat: lat1, lng: lon1  };
+    
     var _kCord = new google.maps.LatLng(this.origin.lat, this.origin.lng);
     var _pCord = new google.maps.LatLng(this.destination.lat, this.destination.lng);
     this.dis = google.maps.geometry.spherical.computeDistanceBetween(_kCord, _pCord).toFixed(3);
@@ -168,7 +171,7 @@ export class AppComponent{
   panelOpenState = false;
   checked = false;
 
-  
+  private readonly connectionStringStorage = "?sv=2019-12-12&ss=bfqt&srt=sco&sp=rwdlacupx&se=2020-09-16T20:26:30Z&st=2020-08-06T12:26:30Z&spr=https,http&sig=NO59mo1wI95CNGVWrXozkF7Nt7Dp%2BVfMPvDqL%2BYL0%2FQ%3D"
 
   private readonly httpOptions = { headers: new HttpHeaders({ "Content-Type": "application/json" }) };
   private readonly negotiateUrl = "http://localhost:7071/api/negotiate";
@@ -176,7 +179,7 @@ export class AppComponent{
   private readonly updateCounterUrl = "https://cors-anywhere.herokuapp.com/https://counterfunctions20200425175523.azurewebsites.net/api/update-counter";
   private readonly getIotDevicesUrl = "https://cors-anywhere.herokuapp.com/https://counterfunctions20200425175523.azurewebsites.net/api/devices";
   private readonly pushButtonUrl = "https://cors-anywhere.herokuapp.com/https://counterfunctions20200425175523.azurewebsites.net/api/pushButton";
-  private readonly getActiveEvents = "https://cors-anywhere.herokuapp.com/https://smokingdetectors.table.core.windows.net/CurrentAlerts?sv=2019-10-10&ss=t&srt=sco&sp=rwdlacu&se=2020-08-08T06:17:45Z&st=2020-06-02T22:17:45Z&spr=https&sig=ez4xdZR94dP9%2FB8Czup%2FRXLYaa%2BfWilA%2BOfi9rgCZqU%3D"
+  private readonly getActiveEvents = "https://cors-anywhere.herokuapp.com/https://smokingdetectors.table.core.windows.net/CurrentAlerts" + this.connectionStringStorage;
   private readonly getClientData = "http://localhost:7071/api/match-alert-to-client/"
   private readonly addEvent = "http://localhost:7071/api/add-event"
   private readonly deleteCurrent = "http://localhost:7071/api/delete-alert"
@@ -185,7 +188,7 @@ export class AppComponent{
   // lina:
   private readonly getHistoryEvents = "http://localhost:7071/api/ListEvents"
 
-  private readonly connectionStringStorage = "?sv=2019-10-10&ss=t&srt=sco&sp=rwdlacu&se=2020-08-08T06:17:45Z&st=2020-06-02T22:17:45Z&spr=https&sig=ez4xdZR94dP9%2FB8Czup%2FRXLYaa%2BfWilA%2BOfi9rgCZqU%3D"
+  //private readonly connectionStringStorage = "?sv=2019-10-10&ss=t&srt=sco&sp=rwdlacu&se=2020-08-08T06:17:45Z&st=2020-06-02T22:17:45Z&spr=https&sig=ez4xdZR94dP9%2FB8Czup%2FRXLYaa%2BfWilA%2BOfi9rgCZqU%3D"
   private readonly counterId = 1;
 
   private hubConnection: signalR.HubConnection;
@@ -208,7 +211,6 @@ export class AppComponent{
 
 
 
-   
 
 
   constructor(private readonly http: HttpClient) {
@@ -230,6 +232,7 @@ export class AppComponent{
         });
         hub.start();
       });
+
 
 
 
@@ -316,7 +319,9 @@ export class AppComponent{
     this.station = i
   }
 
-
+  onChange(event) {
+    this.station = event;
+  }
 
   changeDisabled(): boolean{
     console.log(this.checked)
